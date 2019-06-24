@@ -49,6 +49,8 @@
 
 #include <cstdint>
 #include <complex>
+#include <string>
+#include <map>
 
 #include "Types.h"
 
@@ -91,8 +93,8 @@ namespace acre {
                 /**
                  * Propagation mode
                  */
-                enum class PropagationMode : int8_t {
-                    Undefined  = static_cast<int8_t>(-1),
+                enum class PropagationMode : int32_t {
+                    Undefined  = static_cast<int32_t>(-1),
                             LineOfSight = 0,
                             SingleHorizon = 4,
                             SingleHorizon_Diffraction = 5,
@@ -116,6 +118,17 @@ namespace acre {
                     Individual,
                     Mobile,
                     Broadcast
+                };
+
+                static const std::map<PropagationMode, std::string> PropagationMode2String = {
+                    { PropagationMode::Undefined,                  "Undefined"                             },
+                    { PropagationMode::LineOfSight,                "Line-Of-Sight Mode"                    },
+                    { PropagationMode::SingleHorizon,              "Single Horizon"                        },
+                    { PropagationMode::SingleHorizon_Diffraction,  "Single Horizon, Diffraction Dominant"  },
+                    { PropagationMode::SingleHorizon_Troposcatter, "Single Horizon, Troposcatter Dominant" },
+                    { PropagationMode::DoubleHorizon,              "Double Horizon"                        },
+                    { PropagationMode::DoubleHorizon_Diffraction,  "Double Horizon, Diffraction Dominant"  },
+                    { PropagationMode::DoubleHorizon_Troposcatter, "Double Horizon, Troposcatter Dominant" }
                 };
 
                 class LongleyRiceITM {
@@ -155,7 +168,7 @@ namespace acre {
                             const float64_t conf,
                             const float64_t rel,
                             float64_t &dbloss,
-                            PropagationMode &propMode,
+                            std::string &propMode,
                             int32_t &p_mode,
                             float64_t(&horizons)[2],
                             Error &errnum);

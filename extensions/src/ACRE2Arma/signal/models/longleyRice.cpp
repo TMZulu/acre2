@@ -62,6 +62,7 @@ void acre::signal::model::longleyRice::process(
 
     float64_t dbloss = 0.0;
     char strmode[150];
+    std::string strMode;
     int32_t p_mode = static_cast<int32_t>(acre_itmPropagation_los);
     float64_t horizons[2] = { 0.0, 0.0 };
     int32_t error = 0;
@@ -84,7 +85,7 @@ void acre::signal::model::longleyRice::process(
     } else {
         acre::signal::model::itm::LongleyRiceITM::pointToPoint(itmElevations.data(), static_cast<float64_t>(rx_pos.z), static_cast<float64_t>(tx_pos.z),
                 eps_dielect, sgm_conductivity, eno, static_cast<float64_t>(frequency_MHz), radioClimate,
-                static_cast<itm::Polarization>(polarization), conf, rel, dbloss, propMode, p_mode, horizons, errnum);
+                static_cast<itm::Polarization>(polarization), conf, rel, dbloss, strMode, p_mode, horizons, errnum);
     }
 
     //LOG(INFO) << "ITWOM error code " << errnum;

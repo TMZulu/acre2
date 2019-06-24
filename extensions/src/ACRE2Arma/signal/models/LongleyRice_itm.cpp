@@ -43,7 +43,7 @@ float64_t acre::signal::model::itm::LongleyRiceITM::Fn(const float64_t v_square)
 float64_t acre::signal::model::itm::LongleyRiceITM::F(const float64_t x, const float64_t K) {
     float64_t fhtv = 0.0;
 
-    if (x <= 200.0) {
+    if (x < 200.0) {
         // F = F_2(x, L), which is defined in [Alg 6.6]
 
         float64_t w = -std::log(K);
@@ -1168,14 +1168,14 @@ void acre::signal::model::itm::LongleyRiceITM::pointToPoint(const float64_t *con
         const float64_t conf,
         const float64_t rel,
         float64_t &dbloss,
-        PropagationMode &propMode,
+        std::string &strMode,
         int32_t &p_mode,
         float64_t(&horizons)[2],
         Error &errnum) {
 
     if (elev == nullptr) {
         dbloss = -992.0;
-        propMode = PropagationMode::Undefined;
+        strMode = PropagationMode2String.at(PropagationMode::Undefined);
         p_mode = 0;
         horizons[0] = 0.0;
         horizons[1] = 0.0;
@@ -1214,6 +1214,7 @@ void acre::signal::model::itm::LongleyRiceITM::pointToPoint(const float64_t *con
 
     horizons[0] = 0.0;
     horizons[1] = 0.0;
+    PropagationMode propMode = PropagationMode::Undefined;
     if (static_cast<int32_t>(q) < 0) {
         propMode = PropagationMode::LineOfSight;
         p_mode = 0;
@@ -1239,6 +1240,7 @@ void acre::signal::model::itm::LongleyRiceITM::pointToPoint(const float64_t *con
         }
     }
 
+    strMode = PropagationMode2String.at(propMode);
     dbloss = avar(zr, 0.0, zc, prop, propv) + fs;
     errnum = prop.kwx;
 }
