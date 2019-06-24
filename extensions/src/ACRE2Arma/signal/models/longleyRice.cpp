@@ -13,18 +13,18 @@ acre::signal::model::longleyRice::~longleyRice() {
 }
 
 void acre::signal::model::longleyRice::process(
-    result *const result,
-    const glm::vec3 &tx_pos,
-    const glm::vec3 &tx_dir,
-    const glm::vec3 &rx_pos,
-    const glm::vec3 &rx_dir,
-    const antenna_p &tx_antenna,
-    const antenna_p &rx_antenna,
-    const float32_t frequency_MHz,
-    const float32_t power_mW,
-    const bool useITWOM,
-    const bool omnidirectional,
-    const bool useClutterAttenuation) {
+        result *const result,
+        const glm::vec3 &tx_pos,
+        const glm::vec3 &tx_dir,
+        const glm::vec3 &rx_pos,
+        const glm::vec3 &rx_dir,
+        const antenna_p &tx_antenna,
+        const antenna_p &rx_antenna,
+        const float32_t frequency_MHz,
+        const float32_t power_mW,
+        const bool useITWOM,
+        const bool omnidirectional,
+        const bool useClutterAttenuation) {
 
     if ((frequency_MHz < 20.0f) || (frequency_MHz > 20000.0f)) {
         // Frequency out of range
@@ -53,8 +53,8 @@ void acre::signal::model::longleyRice::process(
     const float64_t txPower = static_cast<float64_t>(mW_to_dbm(power_mW));
     const float64_t linkBudget = txPower + txGain - txInternalLoss + rxGain - rxInternalLoss;
 
-    const MapClimate radioClimate = _map->getMapClimate();
-    const float64_t eps_dielect = 15.0;         // TODO: Make it map dependent?
+    const itm::RadioClimate radioClimate = static_cast<itm::RadioClimate>(_map->getMapClimate());
+    const float64_t eps_dielect = 15.0;        // TODO: Make it map dependent?
     const float64_t sgm_conductivity = 0.005;  // TODO: Make it map dependent?
     const float64_t eno = 301.0;               // TODO: Make it map dependent?
     const float64_t conf = 0.90;               // 90% of situations and time, take into account speed
@@ -64,7 +64,9 @@ void acre::signal::model::longleyRice::process(
     char strmode[150];
     int32_t p_mode = static_cast<int32_t>(acre_itmPropagation_los);
     float64_t horizons[2] = { 0.0, 0.0 };
-    int32_t errnum = 0;
+    int32_t error = 0;
+    itm::PropagationMode propMode = itm::PropagationMode::Undefined;
+    itm::Error errnum = itm::Error::NoError;
 
     // Get elevation data and prepare it as ITM format
     std::vector<float64_t> itmElevations;
@@ -77,12 +79,12 @@ void acre::signal::model::longleyRice::process(
 
     if (useITWOM) {
         acre::signal::model::itwom::point_to_point(itmElevations.data(), static_cast<float64_t>(rx_pos.z), static_cast<float64_t>(tx_pos.z),
-                                                   eps_dielect, sgm_conductivity, eno, static_cast<float64_t>(frequency_MHz), static_cast<int32_t>(radioClimate),
-                                                   static_cast<int32_t>(polarization), conf, rel, dbloss, strmode, errnum);
+                eps_dielect, sgm_conductivity, eno, static_cast<float64_t>(frequency_MHz), static_cast<int32_t>(radioClimate),
+                static_cast<int32_t>(polarization), conf, rel, dbloss, strmode, error);
     } else {
-        acre::signal::model::itm::point_to_point(itmElevations.data(), static_cast<float64_t>(rx_pos.z), static_cast<float64_t>(tx_pos.z),
-                                                 eps_dielect, sgm_conductivity, eno, static_cast<float64_t>(frequency_MHz), static_cast<int32_t>(radioClimate),
-                                                 static_cast<int32_t>(polarization), conf, rel, dbloss, strmode, p_mode, horizons, errnum);
+        acre::signal::model::itm::LongleyRiceITM::pointToPoint(itmElevations.data(), static_cast<float64_t>(rx_pos.z), static_cast<float64_t>(tx_pos.z),
+                eps_dielect, sgm_conductivity, eno, static_cast<float64_t>(frequency_MHz), radioClimate,
+                static_cast<itm::Polarization>(polarization), conf, rel, dbloss, propMode, p_mode, horizons, errnum);
     }
 
     //LOG(INFO) << "ITWOM error code " << errnum;
