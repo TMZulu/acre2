@@ -1,7 +1,17 @@
 #include "LongleyRice_itm.h"
 
+#ifdef _WIN32
+// Fucking windows.h and its stupid defines
+#undef min
+#undef max
+#endif
+
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <iostream>
+#include <algorithm>
+
+
 
 #define set_warn(txt, err)
 
@@ -134,7 +144,7 @@ float64_t acre::signal::model::itm::LongleyRiceITM::adiff(const float64_t s, pro
         const float64_t ALPHA = 4.77e-4;                       // from [Alg 4.10]
         A_fo = std::min(15.0, 2.171 * std::log(1.0 + ALPHA * prop.h_g[0] * prop.h_g[1] * prop.k * q)); // [Alg 4.10]
 
-        qk = 1.0 / std::fabs(prop_zgnd);                       // qk is part of the K_j calculation from [Alg 4.17]
+        qk = 1.0 / std::abs(prop_zgnd);                        // qk is part of the K_j calculation from [Alg 4.17]
         aht = 20.0;                                            // 20 dB approximation for C_1(K) from [Alg 6.7], see also [Alg 4.25]
         xht = 0.0;
 
@@ -277,9 +287,9 @@ float64_t acre::signal::model::itm::LongleyRiceITM::A_los(const float64_t d, pro
     const float64_t alosv = prop.emd * d + prop.aed;    // [Alg 4.45]
     q = prop.k * prop.h_e[0] * prop.h_e[1] * 2.0 / d;   // [Alg 4.49]
 
-    // M_PI is pi, M_PI_2 is pi/2
-    if (q > M_PI_2) {                                   // [Alg 4.50]
-        q = M_PI - (M_PI_2 * M_PI_2) / q;
+    // m_pi is pi, m_pi_2 is pi/2
+    if (q > m_pi_2) {                                   // [Alg 4.50]
+        q = m_pi - (m_pi_2 * m_pi_2) / q;
     }
 
     // [Alg 4.51 and 4.44]
@@ -312,7 +322,7 @@ void acre::signal::model::itm::LongleyRiceITM::lrprop(const float64_t d, prop_ty
          * */
 
         // Frequency must be between 40 MHz and 10 GHz
-        // Wave number (wn) = 2 * M_PI / lambda, or f/f0, where f0 = 47.7 MHz*m;
+        // Wave number (wn) = 2 * m_pi / lambda, or f/f0, where f0 = 47.7 MHz*m;
         // 0.838 => 40 MHz, 210 => 10 GHz
         if ((prop.k < 0.838) || (prop.k > 210.0)) {
             set_warn("Frequency not optimal", Error::NearlyOutOfRange);
@@ -1146,7 +1156,7 @@ void acre::signal::model::itm::LongleyRiceITM::qlrpfl(const float64_t *const pfl
     lrprop(0.0, prop);
 }
 
-static void acre::signal::model::itm::LongleyRiceITM::pointToPoint(const float64_t *const elev,
+void acre::signal::model::itm::LongleyRiceITM::pointToPoint(const float64_t *const elev,
         const float64_t tht_m,
         const float64_t rht_m,
         const float64_t eps_dielect,

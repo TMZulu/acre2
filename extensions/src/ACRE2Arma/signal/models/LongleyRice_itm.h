@@ -51,6 +51,7 @@
 #include <complex>
 
 #include "Types.h"
+
 namespace acre {
     namespace signal {
         namespace model {
@@ -290,8 +291,10 @@ namespace acre {
                         ClimateChangedOrInitialise  /*!< 5: climate changed, or initialize everything */
                     };
 
-                    static constexpr float64_t third = 1.0 / 3.0;  /*!< One third constant */
-                    static constexpr float64_t f_0   = 47.7;       /*!< 47.7 MHz from [Alg 1.1], to convert frequency into wavenumber and vica versa */
+                    static constexpr float64_t third  = 1.0 / 3.0;               /*!< One third constant */
+                    static constexpr float64_t f_0    = 47.7;                    /*!< 47.7 MHz from [Alg 1.1], to convert frequency into wavenumber and vica versa */
+                    static constexpr float64_t m_pi   = 3.14159265358979323846;  /*!< PI */
+                    static constexpr float64_t m_pi_2 = 1.57079632679489661923;  /*!< PI/2*/
 
                     struct prop_type {
                         // General input

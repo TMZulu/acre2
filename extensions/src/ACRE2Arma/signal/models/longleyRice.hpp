@@ -1,11 +1,6 @@
 #ifndef ACRE2ARMA_SIGNAL_MODELS_LONGLEYRICE_HPP_
 #define ACRE2ARMA_SIGNAL_MODELS_LONGLEYRICE_HPP_
 
-#include <cmath>
-#include <complex>
-#include <cassert>
-#include <algorithm>
-
 #include "models_common.hpp"
 #include "../antenna/antenna.hpp"
 
