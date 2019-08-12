@@ -23,6 +23,16 @@ class CfgUIGrids {
                         IGUI_GRID_VEHICLE_W,
                         IGUI_GRID_VEHICLE_H
                     };
+                    grid_ACRE_recieving[] = {
+                        {
+                            "(SafeZoneX + SafeZoneW) - 0.352",
+                            "(SafeZoneY + SafeZoneH) - 0.128",
+                            "0.352",
+                            "0.128"
+                        },
+                        "((safezoneW / safezoneH) min 1.2) / 40",
+                        "(((safezoneW / safezoneH) min 1.2) / 1.2) / 25"
+                    };
                 };
             };
         };
@@ -39,6 +49,13 @@ class CfgUIGrids {
                 description = CSTRING(VehicleInfoGrid_Description);
                 preview = QPATHTOF(data\ui\IGUI_vehicleInfo_preview_ca.paa);
                 saveToProfile[] = {0, 1, 2, 3}; // Save W and H as well due to 1.94 bug setting W to 0
+                canResize = 0;
+            };
+            class grid_ACRE_recieving {
+                displayName = CSTRING(ReceivingGrid);
+                description = CSTRING(ReceivingGridDesc);
+                //preview = QPATHTOF(data\ui\IGUI_receiving_preview_ca.paa);
+                saveToProfile[] = {0,1,2,3};
                 canResize = 0;
             };
         };
